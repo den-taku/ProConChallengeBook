@@ -14,11 +14,10 @@ fn main(n: usize, m: usize, s: String, t: String) -> usize {
             j + 1
         });
         if i == n {
-            println!("{:?}", dp);
             dp[(n + 1) * (m + 1) - 1]
         } else {
-            println!("{} cycle : {:?}", i ,dp);
             i + 1
         }
     })
 }
+
