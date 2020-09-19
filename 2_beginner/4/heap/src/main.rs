@@ -55,7 +55,7 @@ impl<T> BinaryHeap<T>
         self.orderize_from_down(self.array.len() - 1);
     }
 
-    // Now Implementing
+    // Now Implement!
     fn pop(&mut self) -> T {
         let last_index = self.array.len() - 1;
         self.array.swap(0, last_index);
@@ -85,7 +85,31 @@ impl<T> BinaryHeap<T>
         let l = self.array.len();
         loop {
             if 2 * i + 1 < l {
-                let parant = match self.array.get(i) { // from here
+                let parant;
+                let left;
+                unsafe {
+                    parant = self.array.get_self(i);
+                    left = self.array.get_left_child(i);
+                }
+                if parant > left {
+                    self.array.swap(i, 2 * i + 1);
+                    i = 2 * i + 1;
+                    continue;
+                } else if 2 * i + 2 < l {
+                    let right;
+                    unsafe {
+                        right = self.array.get_right_child(i);
+                    }
+                    if parant > right {
+                        self.array.swap(i, 2 * i + 2);
+                        i = 2 * i + 2;
+                        continue;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            break;
                     
         }
     }
