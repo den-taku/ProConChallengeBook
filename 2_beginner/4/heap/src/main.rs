@@ -44,7 +44,7 @@ trait Binary<T> {
 }
 
 impl<T> BinaryHeap<T> 
-    where T: Ord + Default + Clone
+    where T: Ord + Default + Clone,
 {
     fn new() -> BinaryHeap<T> {
         BinaryHeap { array: Vec::<T>::new() }
@@ -55,11 +55,15 @@ impl<T> BinaryHeap<T>
         self.orderize_from_down(self.array.len() - 1);
     }
 
-    // Now Implement!
-    fn pop(&mut self) -> T {
+    fn pop(&mut self) -> Option<T> {
+        if self.array.len() == 0 {
+            return None;
+        }
         let last_index = self.array.len() - 1;
         self.array.swap(0, last_index);
-        T::default()
+        let value = self.array.pop();
+        self.orderize_from_top(0);
+        value
     }
             
      fn orderize_from_down(&mut self, start: usize) {
@@ -80,27 +84,45 @@ impl<T> BinaryHeap<T>
         }
     }
 
+    // ZZZZ
     fn orderize_from_top(&mut self, start: usize) {
-        let mut i = start;
-        let l = self.array.len();
-        loop {
-            if 2 * i + 1 < l {
+        if self.array.len() != 0 {
+            let mut i = start;
+            let l = self.array.len();
+            loop {
+                let mut c_value: [T; 2] = [T::default(), T::default()];
+                if 2 * i + 1 < l {
+                    unsafe {
+                        c_value[0] = self.array.get_left_child(i);
+                    }
+                } else {
+                    unsafe {
+                        c_value[0] = self.array.get_self(i);
+                    }
+                }
+                if 2 * i + 2 < l {
+                    unsafe {
+                        c_value[1] = self.array.get_right_child(i);
+                    }
+                } else {
+                    unsafe {
+                        c_value[1] = self.array.get_self(i);
+                    }
+                }
                 let parant;
-                let left;
                 unsafe {
                     parant = self.array.get_self(i);
-                    left = self.array.get_left_child(i);
                 }
-                if parant > left {
-                    self.array.swap(i, 2 * i + 1);
-                    i = 2 * i + 1;
-                    continue;
-                } else if 2 * i + 2 < l {
-                    let right;
-                    unsafe {
-                        right = self.array.get_right_child(i);
+                if c_value[0].clone() <= c_value[1].clone() {
+                    if parant > c_value[0] {
+                        self.array.swap(i, 2 * i + 1);
+                        i = 2 * i + 1;
+                        continue;
+                    } else {
+                        break;
                     }
-                    if parant > right {
+                } else {
+                    if parant > c_value[1] {
                         self.array.swap(i, 2 * i + 2);
                         i = 2 * i + 2;
                         continue;
@@ -109,12 +131,17 @@ impl<T> BinaryHeap<T>
                     }
                 }
             }
-            break;
-                    
         }
     }
            
 }
+
+
+// if parant > left {
+//                     self.array.swap(i, 2 * i + 1);
+//                     i = 2 * i + 1;
+//                     continue;
+//                 } else 
 
 #[test]
 fn test_push() {
@@ -144,4 +171,14 @@ fn main() {
         bh.push(i);
     }
     println!("{:?}", bh);
+    let mut v = Vec::new();
+    for i in 0..11 {
+        match bh.pop() {
+            Some(e) => v.push(e),
+            None => println!("No more: {}", i)
+        }
+        println!("{:?}", bh)
+    }        
+    println!("{:?}", bh);
+    println!("{:?}", v);
 }
