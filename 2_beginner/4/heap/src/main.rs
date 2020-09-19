@@ -3,6 +3,46 @@ struct BinaryHeap<T:Ord> {
     array: Vec<T>
 }
 
+// use these method for secure index
+impl<T> Binary<T> for Vec<T>
+    where T: Clone
+{
+    unsafe fn get_self(&self, index: usize) -> T {
+        match self.get(index) {
+            Some(r) => (*r).clone(),
+            None => unreachable!()
+        }
+    }
+
+    unsafe fn get_parant(&self, index: usize) -> T {
+        match self.get((index - 1) / 2) {
+            Some(r) => (*r).clone(),
+            None => unreachable!()
+        }
+    }
+
+    unsafe fn get_left_child(&self, index: usize) -> T {
+        match self.get(2 * index + 1) {
+            Some(r) => (*r).clone(),
+            None => unreachable!()
+        }
+    }
+
+    unsafe fn get_right_child(&self, index: usize) -> T {
+        match self.get(2 * index + 2) {
+            Some(r) => (*r).clone(),
+            None => unreachable!()
+        }
+    }
+}
+
+trait Binary<T> {
+    unsafe fn get_self(&self, index: usize) -> T;
+    unsafe fn get_parant(&self, index: usize) -> T;
+    unsafe fn get_left_child(&self, index: usize) -> T;
+    unsafe fn get_right_child(&self, index: usize) -> T;
+}
+
 impl<T> BinaryHeap<T> 
     where T: Ord + Default + Clone
 {
@@ -10,17 +50,27 @@ impl<T> BinaryHeap<T>
         BinaryHeap { array: Vec::<T>::new() }
     }
 
-    fn orderize(&mut self, start: usize) {
-        let mut i = start;;
+    fn push(&mut self, x: T) {
+        self.array.push(x);
+        self.orderize_from_down(self.array.len() - 1);
+    }
+
+    // Now Implementing
+    fn pop(&mut self) -> T {
+        let last_index = self.array.len() - 1;
+        self.array.swap(0, last_index);
+        T::default()
+    }
+            
+     fn orderize_from_down(&mut self, start: usize) {
+        let mut i = start;
         while i > 0 {
-            let parant = match self.array.get((i - 1) / 2) {
-                Some(r) => (*r).clone(),
-                None => T::default()
-            };
-            let child = match self.array.get(i) {
-                Some(r) => (*r).clone(),
-                None => T::default()
-            };
+            let parant;
+            let child;
+            unsafe {
+                parant = self.array.get_parant(i);
+                child = self.array.get_self(i);
+            }
             if parant > child {
                 self.array.swap((i - 1) / 2, i);
                 i = (i - 1) / 2;
@@ -30,15 +80,16 @@ impl<T> BinaryHeap<T>
         }
     }
 
-    fn push(&mut self, x: T) {
-        self.array.push(x);
-        self.orderize(self.array.len() - 1);
+    fn orderize_from_top(&mut self, start: usize) {
+        let mut i = start;
+        let l = self.array.len();
+        loop {
+            if 2 * i + 1 < l {
+                let parant = match self.array.get(i) { // from here
+                    
+        }
     }
-
-    // fn pop(&mut self) -> T {
-    // }
-            
-            
+           
 }
 
 #[test]
@@ -50,6 +101,7 @@ fn test_push() {
     }
 }
 
+#[test]
 fn test_orderize() {
     let mut bh = BinaryHeap::new();
     let mut index = 0;
