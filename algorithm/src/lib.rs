@@ -105,6 +105,9 @@ impl<T> BinaryHeap<T>
         }
     }
 
+    // ZZZZ
+    fn orderize_from_top(&mut self, start: usize) {
+        if self.array.len() != 0 {
             let mut i = start;
             let l = self.array.len();
             loop {
@@ -163,7 +166,7 @@ struct UnionFind {
 }
 
 impl UnionFind {
-    fn new(n: usize) -> UnionFind {
+    fn new(n: usize) -> Self {
         UnionFind {
             par: { 
                 let mut v = Vec::with_capacity(n);
