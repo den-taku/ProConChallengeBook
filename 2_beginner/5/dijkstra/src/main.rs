@@ -25,15 +25,15 @@ impl<T> PartialOrd for DirectedCost<T>
 }
 
 // signature's refernce -> bellman_ford
-fn dijkstra<T>(v: usize, e: usize, s: usize, mut d: Vec<T>, edge: &Vec<(usize, usize, T)>) -> Option<Vec<T>>
+fn dijkstra<T>(v: usize, e: usize, s: usize, g: usize, mut d: Vec<T>, edge: &Vec<(usize, usize, T)>) -> Option<Vec<T>>
     where T: Ord + Copy + Default + Add<Output=T> + Bounded
 {
     // make adjacency list
     let mut adj_list: Vec<Vec<DirectedCost<T>>> = vec![Vec::new(); v];
     for i in 0..e {
-        let from = edge[e].0;
-        let to = edge[e].1;
-        let cost = edge[e].2;
+        let from = edge[i].0;
+        let to = edge[i].1;
+        let cost = edge[i].2;
         adj_list[from].push(DirectedCost(to, cost));
         adj_list[to].push(DirectedCost(from, cost));
     }
@@ -44,19 +44,34 @@ fn dijkstra<T>(v: usize, e: usize, s: usize, mut d: Vec<T>, edge: &Vec<(usize, u
     for i in 0..v {
         d.push(T::max_value());
     }
-    d[s] = T::default();
-    visited[s] = true;
-    let mut next_candidate = BinaryHeap::new();
-    while !(adj_list[s].is_empty()) {
-        next_candidate.push(adj_list[s].pop());
+    let mut next_candidates = BinaryHeap::new();
+    next_candidates.push(DirectedCost(s, T::default()));
+    let mut root_cost = T::default();
+    while let Some(DirectedCost(next_position, next_cost)) = next_candidates.pop() {
+        visited[next_position] = true;
+        if next_position == g {
+            d[next_position] = next_cost;
+            return Some(d);
+        }
+        if next_cost > d[next_position] {
+            continue;
+        }
+        for ed in &adj_list[next_position] {
+            let next_edge = DirectedCost(ed.0, next_cost + ed.1);
+            if next_edge.1 < d[next_edge.0] {
+                d[next_edge.0] = next_edge.1;
+                next_candidates.push(next_edge);
+            }
+        }
     }
-
-
-
     None
 }
 
 #[argio(output = AtCoder)]
-fn main() {
-    println!("Hello, world!");
+fn main(v: usize, e: usize, s: usize, g: usize, edge: [(usize, usize, i32); e]) -> i32 {
+    let mut d = Vec::<i32>::new();
+    match dijkstra(v, e, s, g, d, &edge) {
+        Some(d) => d[g],
+        None => -1
+    }
 }
