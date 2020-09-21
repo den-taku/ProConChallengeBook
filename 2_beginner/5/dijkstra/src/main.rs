@@ -46,7 +46,6 @@ fn dijkstra<T>(v: usize, e: usize, s: usize, g: usize, mut d: Vec<T>, edge: &Vec
     }
     let mut next_candidates = BinaryHeap::new();
     next_candidates.push(DirectedCost(s, T::default()));
-    let mut root_cost = T::default();
     while let Some(DirectedCost(next_position, next_cost)) = next_candidates.pop() {
         visited[next_position] = true;
         if next_position == g {
