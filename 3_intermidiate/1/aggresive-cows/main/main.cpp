@@ -1,6 +1,8 @@
 #include <iostream>
-#include "cable_master.h"
+#include "aggresive-cows.h"
 #include "lib/proconlib.h"
+#include <vector>
+#include <algorithm>
 // using namespace std;
 
 int main() {
