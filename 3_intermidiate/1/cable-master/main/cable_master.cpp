@@ -2,10 +2,6 @@
 // Coder: DenTaku
 #include <vector>
 
-void somefunc() {
-  //
-}
-
 int cut(std::vector<int> v, int est) {
   int num = 0;
   for (const auto &e : v) {
@@ -25,4 +21,5 @@ int b_search(std::vector<int> v, int lower_bound, int upper_bound, int k) {
   } else if (count >= k) {
     return b_search(v, est, upper_bound, k);
   }
+  return -1;
 }
