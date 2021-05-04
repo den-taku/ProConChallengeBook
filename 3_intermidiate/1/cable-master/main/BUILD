@@ -1,14 +1,14 @@
 cc_library (
-    name = "cable-master",
-    srcs = ["cable-master.cpp"],
-    hdrs = ["cable-master.h"],
+    name = "cable_master",
+    srcs = ["cable_master.cpp"],
+    hdrs = ["cable_master.h"],
 )
 
 cc_binary (
     name = "main",
     srcs = ["main.cpp"],
     deps = [
-        ":cable-master",
+        ":cable_master",
         "//lib:proconlib",
     ],
 )
