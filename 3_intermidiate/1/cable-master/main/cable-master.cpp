@@ -2,5 +2,5 @@
 // Coder: DenTaku
 
 void somefunc() {
-    //
+  //
 }
