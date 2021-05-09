@@ -15,7 +15,7 @@ int main() {
     std::cin >> tmp;
     v.push_back(tmp);
   }
-  std::sort(v.begin(), v.end(), std::greater<int>{});
+  // std::sort(v.begin(), v.end(), std::greater<int>{});
 
   int k = 0;
   std::cin >> k;
